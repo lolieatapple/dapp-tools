@@ -165,6 +165,33 @@ function App() {
                 if (web3 && web3.utils.isAddress(tokenAddress)) {
                   const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
                   sc.methods
+                    .allowance(address, destAddress)
+                    .call()
+                    .then((ret) => {
+                      message.info(ret, 20);
+                    })
+                    .catch((err) => {
+                      message.info(err.message);
+                    });
+                } else {
+                  message.info("input not good");
+                }
+              }}
+            >
+              Allowance
+            </Button>
+            <Button
+              style={{
+                // margin: "20px",
+                width: "200px",
+                textAlign: "center",
+                height: "40px",
+                borderRadius: "20px",
+              }}
+              onClick={() => {
+                if (web3 && web3.utils.isAddress(tokenAddress)) {
+                  const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
+                  sc.methods
                     .balanceOf(address)
                     .call()
                     .then((ret) => {
