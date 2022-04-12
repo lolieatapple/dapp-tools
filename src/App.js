@@ -3,6 +3,13 @@ import { useState } from "react";
 import { Button, Card, Input, Space, message } from "antd";
 import "./App.css";
 import Wallet from "./Wallet";
+import { exitPool } from "./balancer";
+import {
+  materialCells,
+  materialRenderers,
+} from '@jsonforms/material-renderers';
+import { JsonForms } from '@jsonforms/react';
+
 const erc20Abi = require("./erc20.abi.json");
 const erc721Abi = require("./erc721.abi.json");
 const MAX =
@@ -22,6 +29,33 @@ function App() {
   const [destAddress, setDestAddress] = useLocalStorageState("destAddress", "");
 
   const [tokenID, setTokenID] = useLocalStorageState("tokenID", "");
+
+  const [data, setData] = useState({});
+  const balancerSchema = {
+    type: "object",
+    properties: {
+      vault: {
+        type: "string",
+        description: "Vault SC address, such as: 0xf2BAaF9D8B4B0CFb19d46Ac9FFb8102e5930fadE"
+      },
+      poolId: {
+        type: "string",
+        description: "Pool ID, such as: 0x19ae2c19eb845db54177ccaacf524931cbf15482000200000000000000000027"
+      },
+      bptIn: {
+        type: "string",
+        description: "BPT burn amount in wei, such as: 7247796636776810343162562"
+      },
+      tokensOut: {
+        type: 'array',
+        items: {
+          type: 'string',
+          description: "Token Address"
+        }
+      }
+    },
+    required: ["vault","poolId","bptIn","tokensOut"]
+  }
 
 
   return (
@@ -441,6 +475,33 @@ function App() {
           </Space>
         </Card>
         
+        <Card style={{borderRadius: '20px', margin: "20px"}}>
+          <Space direction="vertical" >
+            <h2 style={{width:'400px'}}>Balancer Exit Pool</h2>
+            <JsonForms
+              data={data}
+              schema={balancerSchema}
+              renderers={materialRenderers}
+              cells={materialCells}
+              onChange={e=>setData(e.data)}
+            />
+            <Button
+              style={{
+                // margin: "20px",
+                width: "200px",
+                textAlign: "center",
+                height: "40px",
+                borderRadius: "20px",
+              }}
+              onClick={()=>{
+                exitPool(address, web3, data).then(ret=>{
+
+                }).catch(err=>{
+
+                });
+            }}>ExitPool</Button>
+          </Space>
+        </Card>
       </header>
     </div>
   );
