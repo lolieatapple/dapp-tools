@@ -174,6 +174,12 @@ class Wallet extends React.Component {
           },
         },
       },
+      xdc: {
+        package: {},
+        opts: {
+          config: {},
+        },
+      }
     };
     return providerOptions;
   };

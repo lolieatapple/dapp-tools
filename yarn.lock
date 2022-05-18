@@ -3478,10 +3478,10 @@
   dependencies:
     "@walletconnect/window-getters" "^1.0.0"
 
-"@wandevs/web3modal@^1.10.6":
-  version "1.10.6"
-  resolved "https://registry.yarnpkg.com/@wandevs/web3modal/-/web3modal-1.10.6.tgz#4d77a50de94fe49d43bdbe48519d71fb3840b627"
-  integrity sha512-7SfMKwwu4+ninSt7GovgYojFAvLcC4YlroDkL1EFc7v5OneH/T2azB4X2DKtl40VpQXPBOz84pZAtd9MvfZHig==
+"@wandevs/web3modal@1.11.3":
+  version "1.11.3"
+  resolved "https://registry.yarnpkg.com/@wandevs/web3modal/-/web3modal-1.11.3.tgz#5a6bea78d35d4aedc4f13e3829d637756ba56c73"
+  integrity sha512-83eqe/xUOTXs3Nv1xBb4Z8kveX66AG6UKgrVpjKUp+bhBT4FrlMp+Zr1awL3cKxIn4hekG/diqiM6xaKTaJcTA==
   dependencies:
     detect-browser "^5.1.0"
     prop-types "^15.7.2"

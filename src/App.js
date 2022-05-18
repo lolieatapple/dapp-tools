@@ -9,6 +9,7 @@ import {
   materialRenderers,
 } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
+import { TextField } from "@mui/material";
 
 const erc20Abi = require("./erc20.abi.json");
 const erc721Abi = require("./erc721.abi.json");
@@ -57,6 +58,7 @@ function App() {
     required: ["vault","poolId","bptIn","tokensOut"]
   }
 
+  const [rawTx, setRawTx] = useState('');
 
   return (
     <div className="App">
@@ -500,6 +502,33 @@ function App() {
 
                 });
             }}>ExitPool</Button>
+          </Space>
+        </Card>
+
+        <Card style={{borderRadius: '20px', margin: "20px"}}>
+          <Space direction="vertical" >
+            <h2 style={{width:'400px'}}>Send Raw Transaction</h2>
+            <TextField label="Raw Transaction Hex" fullWidth multiline value={rawTx} onChange={e=>setRawTx(e.target.value)} />
+            <Button
+              style={{
+                // margin: "20px",
+                width: "200px",
+                textAlign: "center",
+                height: "40px",
+                borderRadius: "20px",
+              }}
+              onClick={()=>{
+                if (!web3) {
+                  window.alert("please connect wallet first");
+                  return;
+                }
+                console.log('sending...');
+                web3.eth.sendSignedTransaction(rawTx).then(ret=>{
+                  message.success(`success, ${ret}`, 20);
+                }).catch(err=>{
+                  message.error(`${err.message}`);
+                });
+            }}>Send</Button>
           </Space>
         </Card>
       </header>
