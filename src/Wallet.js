@@ -118,6 +118,7 @@ class Wallet extends React.Component {
       });
     } catch (error) {
       console.error(error);
+      this.web3Modal.clearCachedProvider();
     }
   };
 

@@ -55,7 +55,7 @@ function App() {
         }
       }
     },
-    required: ["vault","poolId","bptIn","tokensOut"]
+    // required: ["vault","poolId","bptIn","tokensOut"]
   }
 
   const [rawTx, setRawTx] = useState('');
@@ -74,10 +74,14 @@ function App() {
             borderRadius: "20px",
           }}
           onClick={() => {
-            if (connected) {
+            try {
+              if (connected) {
+                wallet.resetApp();
+              } else {
+                wallet.connect();
+              }
+            } catch (err) {
               wallet.resetApp();
-            } else {
-              wallet.connect();
             }
           }}
         >
@@ -96,441 +100,445 @@ function App() {
           {networkId}
         </div>
         {/* <hr style={{ width: "800px", height: '0px' }} /> */}
-        
-        <Card style={{borderRadius: '20px', margin: "20px"}}>
-          <Space direction="vertical" >
-            <h2>ERC20 tools</h2>
-            <Input
-              value={tokenAddress}
-              onChange={(e) => {
-                setTokenAddress(e.target.value);
-              }}
-              placeholder={"Token SC Address"}
-              style={{
-                // margin: "20px",
-                width: "400px",
-                textAlign: "center",
-                height: "40px",
-              }}
-            />
-            <Input
-              value={destAddress}
-              onChange={(e) => {
-                setDestAddress(e.target.value);
-              }}
-              placeholder={"Destination Address"}
-              style={{
-                // margin: "20px",
-                width: "400px",
-                textAlign: "center",
-                height: "40px",
-              }}
-            />
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (
-                  web3 &&
-                  web3.utils.isAddress(tokenAddress) &&
-                  web3.utils.isAddress(destAddress)
-                ) {
-                  const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
-                  sc.methods
-                    .approve(destAddress, MAX)
-                    .send({ from: address })
-                    .then((ret) => {
-                      console.log(ret.status);
-                      message.success('success', 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              Approve MAX
-            </Button>
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (
-                  web3 &&
-                  web3.utils.isAddress(tokenAddress) &&
-                  web3.utils.isAddress(destAddress)
-                ) {
-                  const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
-                  sc.methods
-                    .approve(destAddress, "0x0")
-                    .send({ from: address })
-                    .then((ret) => {
-                      message.success('success', 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              Approve 0
-            </Button>
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (web3 && web3.utils.isAddress(tokenAddress)) {
-                  const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
-                  sc.methods
-                    .allowance(address, destAddress)
-                    .call()
-                    .then((ret) => {
-                      message.info(ret, 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              Allowance
-            </Button>
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (web3 && web3.utils.isAddress(tokenAddress)) {
-                  const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
-                  sc.methods
-                    .balanceOf(address)
-                    .call()
-                    .then((ret) => {
-                      message.info(ret, 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              Get Balance
-            </Button>
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (
-                  web3 &&
-                  web3.utils.isAddress(tokenAddress) &&
-                  web3.utils.isAddress(destAddress)
-                ) {
-                  let amount = window.prompt("Input amount in wei:");
-                  const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
-                  sc.methods
-                    .transfer(destAddress, amount)
-                    .send({ from: address })
-                    .then((ret) => {
-                      message.success('success', 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              Transfer
-            </Button>
-          </Space>
-        </Card>
 
-        <Card style={{borderRadius: '20px', margin: "20px"}}>
-          <Space direction="vertical" >
-            <h2>ERC721 tools</h2>
-            <Input
-              value={tokenAddress}
-              onChange={(e) => {
-                setTokenAddress(e.target.value);
-              }}
-              placeholder={"Token SC Address"}
-              style={{
-                // margin: "20px",
-                width: "400px",
-                textAlign: "center",
-                height: "40px",
-              }}
-            />
-            <Input
-              value={destAddress}
-              onChange={(e) => {
-                setDestAddress(e.target.value);
-              }}
-              placeholder={"Destination Address"}
-              style={{
-                // margin: "20px",
-                width: "400px",
-                textAlign: "center",
-                height: "40px",
-              }}
-            />
-            <Input
-              value={tokenID}
-              onChange={(e) => {
-                setTokenID(e.target.value);
-              }}
-              placeholder={"Token ID"}
-              style={{
-                // margin: "20px",
-                width: "400px",
-                textAlign: "center",
-                height: "40px",
-              }}
-            />
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (
-                  web3 &&
-                  web3.utils.isAddress(tokenAddress) &&
-                  web3.utils.isAddress(destAddress)
-                ) {
-                  const sc = new web3.eth.Contract(erc721Abi, tokenAddress);
-                  sc.methods
-                    .isApprovedForAll(address, destAddress)
-                    .call({ from: address })
-                    .then((ret) => {
-                      console.log(ret);
-                      message.success(ret.toString(), 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              isApprovedForAll
-            </Button>
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (
-                  web3 &&
-                  web3.utils.isAddress(tokenAddress) &&
-                  web3.utils.isAddress(destAddress)
-                ) {
-                  const sc = new web3.eth.Contract(erc721Abi, tokenAddress);
-                  sc.methods
-                    .setApprovalForAll(destAddress, true)
-                    .send({ from: address })
-                    .then((ret) => {
-                      console.log(ret.status);
-                      message.success('success', 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              setApprovalForAll: true
-            </Button>
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (
-                  web3 &&
-                  web3.utils.isAddress(tokenAddress) &&
-                  web3.utils.isAddress(destAddress)
-                ) {
-                  const sc = new web3.eth.Contract(erc721Abi, tokenAddress);
-                  sc.methods
-                    .setApprovalForAll(destAddress, false)
-                    .send({ from: address })
-                    .then((ret) => {
-                      console.log(ret.status);
-                      message.success('success', 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              setApprovalForAll: false
-            </Button>
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (web3 && web3.utils.isAddress(tokenAddress)) {
-                  const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
-                  sc.methods
-                    .balanceOf(address)
-                    .call()
-                    .then((ret) => {
-                      message.info(ret, 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              Get Balance
-            </Button>
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={() => {
-                if (
-                  web3 &&
-                  web3.utils.isAddress(tokenAddress) &&
-                  web3.utils.isAddress(destAddress) && tokenID !== ""
-                ) {
-                  const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
-                  sc.methods
-                    .transferFrom(address, destAddress, tokenID)
-                    .send({ from: address })
-                    .then((ret) => {
-                      message.success('success', 20);
-                    })
-                    .catch((err) => {
-                      message.info(err.message);
-                    });
-                } else {
-                  message.info("input not good");
-                }
-              }}
-            >
-              Transfer
-            </Button>
-          </Space>
-        </Card>
-        
-        <Card style={{borderRadius: '20px', margin: "20px"}}>
-          <Space direction="vertical" >
-            <h2 style={{width:'400px'}}>Balancer Exit Pool</h2>
-            <JsonForms
-              data={data}
-              schema={balancerSchema}
-              renderers={materialRenderers}
-              cells={materialCells}
-              onChange={e=>setData(e.data)}
-            />
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={()=>{
-                exitPool(address, web3, data).then(ret=>{
+        <div style={{display: 'flex', alignItems:'center', justifyContent:'center', flexFlow:'row wrap' }}>
+          <Card style={{borderRadius: '20px', margin: "20px"}}>
+            <Space direction="vertical" >
+              <h2>ERC20 tools</h2>
+              <Input
+                value={tokenAddress}
+                onChange={(e) => {
+                  setTokenAddress(e.target.value);
+                }}
+                placeholder={"Token SC Address"}
+                style={{
+                  // margin: "20px",
+                  width: "400px",
+                  textAlign: "center",
+                  height: "40px",
+                }}
+              />
+              <Input
+                value={destAddress}
+                onChange={(e) => {
+                  setDestAddress(e.target.value);
+                }}
+                placeholder={"Destination Address"}
+                style={{
+                  // margin: "20px",
+                  width: "400px",
+                  textAlign: "center",
+                  height: "40px",
+                }}
+              />
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (
+                    web3 &&
+                    web3.utils.isAddress(tokenAddress) &&
+                    web3.utils.isAddress(destAddress)
+                  ) {
+                    const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
+                    sc.methods
+                      .approve(destAddress, MAX)
+                      .send({ from: address })
+                      .then((ret) => {
+                        console.log(ret.status);
+                        message.success('success', 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                Approve MAX
+              </Button>
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (
+                    web3 &&
+                    web3.utils.isAddress(tokenAddress) &&
+                    web3.utils.isAddress(destAddress)
+                  ) {
+                    const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
+                    sc.methods
+                      .approve(destAddress, "0x0")
+                      .send({ from: address })
+                      .then((ret) => {
+                        message.success('success', 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                Approve 0
+              </Button>
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (web3 && web3.utils.isAddress(tokenAddress)) {
+                    const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
+                    sc.methods
+                      .allowance(address, destAddress)
+                      .call()
+                      .then((ret) => {
+                        message.info(ret, 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                Allowance
+              </Button>
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (web3 && web3.utils.isAddress(tokenAddress)) {
+                    const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
+                    sc.methods
+                      .balanceOf(address)
+                      .call()
+                      .then((ret) => {
+                        message.info(ret, 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                Get Balance
+              </Button>
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (
+                    web3 &&
+                    web3.utils.isAddress(tokenAddress) &&
+                    web3.utils.isAddress(destAddress)
+                  ) {
+                    let amount = window.prompt("Input amount in wei:");
+                    const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
+                    sc.methods
+                      .transfer(destAddress, amount)
+                      .send({ from: address })
+                      .then((ret) => {
+                        message.success('success', 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                Transfer
+              </Button>
+            </Space>
+          </Card>
 
-                }).catch(err=>{
+          <Card style={{borderRadius: '20px', margin: "20px"}}>
+            <Space direction="vertical" >
+              <h2>ERC721 tools</h2>
+              <Input
+                value={tokenAddress}
+                onChange={(e) => {
+                  setTokenAddress(e.target.value);
+                }}
+                placeholder={"Token SC Address"}
+                style={{
+                  // margin: "20px",
+                  width: "400px",
+                  textAlign: "center",
+                  height: "40px",
+                }}
+              />
+              <Input
+                value={destAddress}
+                onChange={(e) => {
+                  setDestAddress(e.target.value);
+                }}
+                placeholder={"Destination Address"}
+                style={{
+                  // margin: "20px",
+                  width: "400px",
+                  textAlign: "center",
+                  height: "40px",
+                }}
+              />
+              <Input
+                value={tokenID}
+                onChange={(e) => {
+                  setTokenID(e.target.value);
+                }}
+                placeholder={"Token ID"}
+                style={{
+                  // margin: "20px",
+                  width: "400px",
+                  textAlign: "center",
+                  height: "40px",
+                }}
+              />
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (
+                    web3 &&
+                    web3.utils.isAddress(tokenAddress) &&
+                    web3.utils.isAddress(destAddress)
+                  ) {
+                    const sc = new web3.eth.Contract(erc721Abi, tokenAddress);
+                    sc.methods
+                      .isApprovedForAll(address, destAddress)
+                      .call({ from: address })
+                      .then((ret) => {
+                        console.log(ret);
+                        message.success(ret.toString(), 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                isApprovedForAll
+              </Button>
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (
+                    web3 &&
+                    web3.utils.isAddress(tokenAddress) &&
+                    web3.utils.isAddress(destAddress)
+                  ) {
+                    const sc = new web3.eth.Contract(erc721Abi, tokenAddress);
+                    sc.methods
+                      .setApprovalForAll(destAddress, true)
+                      .send({ from: address })
+                      .then((ret) => {
+                        console.log(ret.status);
+                        message.success('success', 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                setApprovalForAll: true
+              </Button>
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (
+                    web3 &&
+                    web3.utils.isAddress(tokenAddress) &&
+                    web3.utils.isAddress(destAddress)
+                  ) {
+                    const sc = new web3.eth.Contract(erc721Abi, tokenAddress);
+                    sc.methods
+                      .setApprovalForAll(destAddress, false)
+                      .send({ from: address })
+                      .then((ret) => {
+                        console.log(ret.status);
+                        message.success('success', 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                setApprovalForAll: false
+              </Button>
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (web3 && web3.utils.isAddress(tokenAddress)) {
+                    const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
+                    sc.methods
+                      .balanceOf(address)
+                      .call()
+                      .then((ret) => {
+                        message.info(ret, 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                Get Balance
+              </Button>
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={() => {
+                  if (
+                    web3 &&
+                    web3.utils.isAddress(tokenAddress) &&
+                    web3.utils.isAddress(destAddress) && tokenID !== ""
+                  ) {
+                    const sc = new web3.eth.Contract(erc20Abi, tokenAddress);
+                    sc.methods
+                      .transferFrom(address, destAddress, tokenID)
+                      .send({ from: address })
+                      .then((ret) => {
+                        message.success('success', 20);
+                      })
+                      .catch((err) => {
+                        message.info(err.message);
+                      });
+                  } else {
+                    message.info("input not good");
+                  }
+                }}
+              >
+                Transfer
+              </Button>
+            </Space>
+          </Card>
+          
+          <Card style={{borderRadius: '20px', margin: "20px"}}>
+            <Space direction="vertical" >
+              <h2 style={{width:'400px'}}>Send Raw Transaction</h2>
+              <TextField label="Raw Transaction Hex" fullWidth multiline value={rawTx} onChange={e=>setRawTx(e.target.value)} />
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={()=>{
+                  if (!web3) {
+                    window.alert("please connect wallet first");
+                    return;
+                  }
+                  console.log('sending...');
+                  web3.eth.sendSignedTransaction(rawTx).then(ret=>{
+                    message.success(`success, ${ret}`, 20);
+                  }).catch(err=>{
+                    message.error(`${err.message}`);
+                  });
+              }}>Send</Button>
+            </Space>
+          </Card>
 
-                });
-            }}>ExitPool</Button>
-          </Space>
-        </Card>
+          <Card style={{borderRadius: '20px', margin: "20px"}}>
+            <Space direction="vertical" >
+              <h2 style={{width:'400px'}}>Balancer Exit Pool</h2>
+              <JsonForms
+                data={data}
+                schema={balancerSchema}
+                renderers={materialRenderers}
+                cells={materialCells}
+                onChange={e=>setData(e.data)}
+              />
+              <Button
+                style={{
+                  // margin: "20px",
+                  width: "200px",
+                  textAlign: "center",
+                  height: "40px",
+                  borderRadius: "20px",
+                }}
+                onClick={()=>{
+                  exitPool(address, web3, data).then(ret=>{
 
-        <Card style={{borderRadius: '20px', margin: "20px"}}>
-          <Space direction="vertical" >
-            <h2 style={{width:'400px'}}>Send Raw Transaction</h2>
-            <TextField label="Raw Transaction Hex" fullWidth multiline value={rawTx} onChange={e=>setRawTx(e.target.value)} />
-            <Button
-              style={{
-                // margin: "20px",
-                width: "200px",
-                textAlign: "center",
-                height: "40px",
-                borderRadius: "20px",
-              }}
-              onClick={()=>{
-                if (!web3) {
-                  window.alert("please connect wallet first");
-                  return;
-                }
-                console.log('sending...');
-                web3.eth.sendSignedTransaction(rawTx).then(ret=>{
-                  message.success(`success, ${ret}`, 20);
-                }).catch(err=>{
-                  message.error(`${err.message}`);
-                });
-            }}>Send</Button>
-          </Space>
-        </Card>
+                  }).catch(err=>{
+
+                  });
+              }}>ExitPool</Button>
+            </Space>
+          </Card>
+
+
+        </div>
       </header>
     </div>
   );
